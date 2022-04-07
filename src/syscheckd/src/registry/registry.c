@@ -745,6 +745,7 @@ void fim_registry_free_key(fim_registry_key *key) {
  */
 fim_registry_key *fim_registry_get_key_data(HKEY key_handle, const char *path, const registry_t *configuration) {
     fim_registry_key *key;
+    os_sha1 hash_full_path;
 
     os_calloc(1, sizeof(fim_registry_key), key);
 
@@ -780,6 +781,9 @@ fim_registry_key *fim_registry_get_key_data(HKEY key_handle, const char *path, c
     }
 
     key->last_event = time(NULL);
+
+    OS_SHA1_strings(hash_full_path, key->path, key->arch, NULL);
+    os_strdup(hash_full_path, key->hash_full_path);
 
     fim_registry_get_checksum_key(key);
 
@@ -834,6 +838,7 @@ void fim_read_values(HKEY key_handle,
     char *value_path;
     size_t value_path_length;
     registry_t *configuration = NULL;
+    os_sha1 hash_full_path;
     char* diff = NULL;
 
     value_data.arch = arch;
@@ -881,6 +886,10 @@ void fim_read_values(HKEY key_handle,
         if (fim_check_restrict(new.registry_entry.value->name, configuration->restrict_value)) {
             return;
         }
+
+        OS_SHA1_strings(hash_full_path, new.registry_entry.value->arch, new.registry_entry.value->path,
+                        new.registry_entry.value->name, NULL);
+        os_strdup(hash_full_path, new.registry_entry.value->hash_full_path);
 
         fim_registry_calculate_hashes(&new, configuration, data_buffer);
 

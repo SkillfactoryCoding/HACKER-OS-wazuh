@@ -74,7 +74,7 @@ constexpr auto CREATE_REGISTRY_KEY_DB_STATEMENT
     scanned INTEGER,
     last_event INTEGER,
     checksum TEXT NOT NULL,
-    hash_path TEXT NOT NULL,
+    hash_full_path TEXT NOT NULL,
     PRIMARY KEY (arch, path)) WITHOUT ROWID;)"
 };
 
@@ -92,7 +92,7 @@ constexpr auto CREATE_REGISTRY_VALUE_DB_STATEMENT
     scanned INTEGER,
     last_event INTEGER,
     checksum TEXT NOT NULL,
-    hash_path TEXT NOT NULL,
+    hash_full_path TEXT NOT NULL,
     PRIMARY KEY(path, arch, name)
     FOREIGN KEY (path) REFERENCES registry_key(path)
     FOREIGN KEY (arch) REFERENCES registry_key(arch)) WITHOUT ROWID;)"
